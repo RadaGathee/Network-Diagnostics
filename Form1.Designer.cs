@@ -41,6 +41,7 @@
 			this.rdoTracert = new System.Windows.Forms.RadioButton();
 			this.lblProgress = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.lblTimeTaken = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -182,12 +183,22 @@
 			this.label3.Text = "       Note:\r\nSeperate multiple ip addresses with either a\r\ncomma(,) semicolon(;)" +
     " or start on the next line.";
 			// 
+			// lblTimeTaken
+			// 
+			this.lblTimeTaken.AutoSize = true;
+			this.lblTimeTaken.Location = new System.Drawing.Point(57, 186);
+			this.lblTimeTaken.Name = "lblTimeTaken";
+			this.lblTimeTaken.Size = new System.Drawing.Size(130, 16);
+			this.lblTimeTaken.TabIndex = 7;
+			this.lblTimeTaken.Text = "\" Time Taken: 0 ms \"";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.Color.MintCream;
 			this.ClientSize = new System.Drawing.Size(888, 687);
+			this.Controls.Add(this.lblTimeTaken);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.lblProgress);
 			this.Controls.Add(this.rdoTracert);
@@ -223,6 +234,7 @@
 		private System.Windows.Forms.RadioButton rdoTracert;
 		private System.Windows.Forms.Label lblProgress;
 		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label lblTimeTaken;
 	}
 }
 

@@ -23,26 +23,44 @@ namespace Network_Diagnostics
 
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
+			// Check if the IP addresses TextBox is empty
+			if (string.IsNullOrWhiteSpace(txtIpAddresses.Text))
+			{
+				MessageBox.Show("IP addresses cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
 			try
 			{
 				lblProgress.Text = "Status: Starting...";
-				Application.DoEvents();  // Forces the UI to update
+				lblTimeTaken.Text = "Time Taken: 0 ms"; // Reset time taken label
+				Application.DoEvents();  // Force the UI to update
 
 				string[] ipAddresses = txtIpAddresses.Text.Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				string command = rdoTracert.Checked ? "tracert" : "ping";
-				// Performs the diagnostics
+
+				// Record the start time
+				var startTime = DateTime.Now;
+
+				// Perform diagnostics and save logs
 				logFilePath = await PerformNetworkDiagnosticsAsync(ipAddresses, command);
 
-				// Update progress to completed
+				// Record the end time and calculate the duration
+				var endTime = DateTime.Now;
+				var timeTaken = endTime - startTime;
+
+				// Update progress and time taken
 				lblProgress.Text = "Status: Completed";
+				lblTimeTaken.Text = $"Time Taken: {timeTaken.TotalMilliseconds:F2} ms";
 				txtLogs.Text = File.ReadAllText(logFilePath);
 
-				// Notify file saved successfully
+				// Notify file was saved successfully
 				MessageBox.Show("Diagnostics completed and log file saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			catch (Exception ex)
 			{
 				lblProgress.Text = "Status: Failed";
+				lblTimeTaken.Text = "Time Taken: 0 ms"; // Reset time taken on failure
 				MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
@@ -64,7 +82,7 @@ namespace Network_Diagnostics
 					foreach (var ip in ipAddresses)
 					{
 						lblProgress.Text = $"Status: Processing {++currentCount}/{totalCount}";
-						Application.DoEvents();  // Force the UI to update
+						Application.DoEvents();  // Forces the UI to update
 
 						await writer.WriteLineAsync($"IP: {ip}, Command: {command}");
 
@@ -95,7 +113,7 @@ namespace Network_Diagnostics
 				MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
-			return logFilePath;  
+			return logFilePath;
 		}
 
 		private Task<string> ExecuteCommandAsync(string ip, string command)
@@ -166,6 +184,8 @@ namespace Network_Diagnostics
 		private void clear2_Click(object sender, EventArgs e)
 		{
 			txtLogs.Clear();
+			lblProgress.Text = "Status: Waiting";
+			lblTimeTaken.Text = "Time Taken: 0 ms";
 		}
 	}
 }
