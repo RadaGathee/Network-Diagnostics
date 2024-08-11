@@ -1,7 +1,8 @@
 # Network Diagnostics
 ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-5C2D91.svg?style=for-the-badge&logo=visual-studio&logoColor=white)
 
-Performs Network Diagnostics
+- Performs Network Diagnostics
+- Performs ping or tracert operations on a list of IP addresses and saves the results to a text file.
 
 Network Diagnostics UI - Ping
 
