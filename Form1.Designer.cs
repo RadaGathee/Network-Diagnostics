@@ -40,6 +40,7 @@
 			this.rdoPing = new System.Windows.Forms.RadioButton();
 			this.rdoTracert = new System.Windows.Forms.RadioButton();
 			this.lblProgress = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -106,11 +107,11 @@
 			// txtLogs
 			// 
 			this.txtLogs.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-			this.txtLogs.Location = new System.Drawing.Point(64, 254);
+			this.txtLogs.Location = new System.Drawing.Point(60, 254);
 			this.txtLogs.Multiline = true;
 			this.txtLogs.Name = "txtLogs";
 			this.txtLogs.ReadOnly = true;
-			this.txtLogs.Size = new System.Drawing.Size(760, 399);
+			this.txtLogs.Size = new System.Drawing.Size(764, 399);
 			this.txtLogs.TabIndex = 1;
 			// 
 			// label2
@@ -165,11 +166,21 @@
 			// lblProgress
 			// 
 			this.lblProgress.AutoSize = true;
-			this.lblProgress.Location = new System.Drawing.Point(65, 225);
+			this.lblProgress.Location = new System.Drawing.Point(57, 225);
 			this.lblProgress.Name = "lblProgress";
 			this.lblProgress.Size = new System.Drawing.Size(111, 16);
 			this.lblProgress.TabIndex = 5;
 			this.lblProgress.Text = "\" Status: Waiting \"";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(580, 35);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(275, 48);
+			this.label3.TabIndex = 6;
+			this.label3.Text = "       Note:\r\nSeperate multiple ip addresses with either a\r\ncomma(,) semicolon(;)" +
+    " or start on the next line.";
 			// 
 			// Form1
 			// 
@@ -177,6 +188,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.Color.MintCream;
 			this.ClientSize = new System.Drawing.Size(888, 687);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.lblProgress);
 			this.Controls.Add(this.rdoTracert);
 			this.Controls.Add(this.rdoPing);
@@ -210,6 +222,7 @@
 		private System.Windows.Forms.RadioButton rdoPing;
 		private System.Windows.Forms.RadioButton rdoTracert;
 		private System.Windows.Forms.Label lblProgress;
+		private System.Windows.Forms.Label label3;
 	}
 }
 

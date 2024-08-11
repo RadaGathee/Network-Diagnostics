@@ -25,18 +25,24 @@ namespace Network_Diagnostics
 		{
 			try
 			{
+				lblProgress.Text = "Status: Starting...";
+				Application.DoEvents();  // Forces the UI to update
+
 				string[] ipAddresses = txtIpAddresses.Text.Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				string command = rdoTracert.Checked ? "tracert" : "ping";
-
+				// Performs the diagnostics
 				logFilePath = await PerformNetworkDiagnosticsAsync(ipAddresses, command);
+
+				// Update progress to completed
+				lblProgress.Text = "Status: Completed";
 				txtLogs.Text = File.ReadAllText(logFilePath);
 
-				// Notify user that the file was saved successfully
+				// Notify file saved successfully
 				MessageBox.Show("Diagnostics completed and log file saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
 			}
 			catch (Exception ex)
 			{
+				lblProgress.Text = "Status: Failed";
 				MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
@@ -52,8 +58,14 @@ namespace Network_Diagnostics
 			{
 				using (StreamWriter writer = new StreamWriter(logFilePath, false))  // 'false' ensures we're not appending
 				{
+					int totalCount = ipAddresses.Length;
+					int currentCount = 0;
+
 					foreach (var ip in ipAddresses)
 					{
+						lblProgress.Text = $"Status: Processing {++currentCount}/{totalCount}";
+						Application.DoEvents();  // Force the UI to update
+
 						await writer.WriteLineAsync($"IP: {ip}, Command: {command}");
 
 						try
@@ -69,17 +81,21 @@ namespace Network_Diagnostics
 						await writer.WriteLineAsync("------------------------------------------------------");
 					}
 				}
+
+				lblProgress.Text = "Status: Completed";
 			}
 			catch (IOException ex)
 			{
+				lblProgress.Text = "Status: File Error";
 				MessageBox.Show($"File error: {ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch (Exception ex)
 			{
+				lblProgress.Text = "Status: Unexpected Error";
 				MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
-			return logFilePath; 
+			return logFilePath;  
 		}
 
 		private Task<string> ExecuteCommandAsync(string ip, string command)
@@ -117,10 +133,9 @@ namespace Network_Diagnostics
 			{
 				if (!string.IsNullOrEmpty(logFilePath) && File.Exists(logFilePath))
 				{
-					// Suggest the generated file name
 					SaveFileDialog saveFileDialog = new SaveFileDialog();
 					saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-					saveFileDialog.FileName = Path.GetFileName(logFilePath);  
+					saveFileDialog.FileName = Path.GetFileName(logFilePath);  // Suggest the generated file name
 
 					if (saveFileDialog.ShowDialog() == DialogResult.OK)
 					{
