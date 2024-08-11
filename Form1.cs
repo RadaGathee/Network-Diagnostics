@@ -16,9 +16,19 @@ namespace Network_Diagnostics
 	{
 		// Declare logFilePath as a class-level variable
 		private string logFilePath;
+		private Stopwatch stopwatch;
+		private Timer timer;
 		public Form1()
 		{
 			InitializeComponent();
+
+			// Initialize the stopwatch and timer
+			stopwatch = new Stopwatch();
+			timer = new Timer
+			{
+				Interval = 1000 // Update every second
+			};
+			timer.Tick += Timer_Tick;
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
@@ -35,6 +45,9 @@ namespace Network_Diagnostics
 				lblProgress.Text = "Status: Starting...";
 				lblTimeTaken.Text = "Time Taken: 0 ms"; // Reset time taken label
 				Application.DoEvents();  // Force the UI to update
+				
+				stopwatch.Restart();
+				timer.Start();
 
 				string[] ipAddresses = txtIpAddresses.Text.Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				string command = rdoTracert.Checked ? "tracert" : "ping";
@@ -44,6 +57,9 @@ namespace Network_Diagnostics
 
 				// Perform diagnostics and save logs
 				logFilePath = await PerformNetworkDiagnosticsAsync(ipAddresses, command);
+
+				stopwatch.Stop();
+				timer.Stop();
 
 				// Record the end time and calculate the duration
 				var endTime = DateTime.Now;
@@ -65,6 +81,11 @@ namespace Network_Diagnostics
 			}
 		}
 
+		private void Timer_Tick(object sender, EventArgs e)
+		{
+			// Update the time taken label with the elapsed time
+			lblTimeTaken.Text = $"Time Taken: {stopwatch.ElapsedMilliseconds} ms";
+		}
 		private async Task<string> PerformNetworkDiagnosticsAsync(string[] ipAddresses, string command)
 		{
 			// Generate a unique filename with a timestamp

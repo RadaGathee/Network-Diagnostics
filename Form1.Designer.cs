@@ -42,6 +42,7 @@
 			this.lblProgress = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.lblTimeTaken = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -176,7 +177,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(580, 35);
+			this.label3.Location = new System.Drawing.Point(583, 35);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(275, 48);
 			this.label3.TabIndex = 6;
@@ -192,12 +193,22 @@
 			this.lblTimeTaken.TabIndex = 7;
 			this.lblTimeTaken.Text = "\" Time Taken: 0 ms \"";
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(63, 159);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(121, 16);
+			this.label4.TabIndex = 8;
+			this.label4.Text = "1 second = 1000ms";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.Color.MintCream;
 			this.ClientSize = new System.Drawing.Size(888, 687);
+			this.Controls.Add(this.label4);
 			this.Controls.Add(this.lblTimeTaken);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.lblProgress);
@@ -212,6 +223,8 @@
 			this.Controls.Add(this.txtIpAddresses);
 			this.Controls.Add(this.label1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MaximumSize = new System.Drawing.Size(906, 734);
+			this.MinimumSize = new System.Drawing.Size(906, 372);
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Network Diagnostics";
@@ -235,6 +248,7 @@
 		private System.Windows.Forms.Label lblProgress;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label lblTimeTaken;
+		private System.Windows.Forms.Label label4;
 	}
 }
 
