@@ -16,31 +16,76 @@ namespace Network_Diagnostics
 	{
 		// Declare logFilePath as a class-level variable
 		private string logFilePath;
+		private Stopwatch stopwatch;
+		private Timer timer;
 		public Form1()
 		{
 			InitializeComponent();
+
+			// Initialize the stopwatch and timer
+			stopwatch = new Stopwatch();
+			timer = new Timer
+			{
+				Interval = 1000 // Update every second
+			};
+			timer.Tick += Timer_Tick;
 		}
 
 		private async void btnStart_Click(object sender, EventArgs e)
 		{
+			// Check if the IP addresses TextBox is empty
+			if (string.IsNullOrWhiteSpace(txtIpAddresses.Text))
+			{
+				MessageBox.Show("IP addresses cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
 			try
 			{
+				lblProgress.Text = "Status: Starting...";
+				lblTimeTaken.Text = "Time Taken: 0 ms"; // Reset time taken label
+				Application.DoEvents();  // Force the UI to update
+				
+				stopwatch.Restart();
+				timer.Start();
+
 				string[] ipAddresses = txtIpAddresses.Text.Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				string command = rdoTracert.Checked ? "tracert" : "ping";
 
+				// Record the start time
+				var startTime = DateTime.Now;
+
+				// Perform diagnostics and save logs
 				logFilePath = await PerformNetworkDiagnosticsAsync(ipAddresses, command);
+
+				stopwatch.Stop();
+				timer.Stop();
+
+				// Record the end time and calculate the duration
+				var endTime = DateTime.Now;
+				var timeTaken = endTime - startTime;
+
+				// Update progress and time taken
+				lblProgress.Text = "Status: Completed";
+				lblTimeTaken.Text = $"Time Taken: {timeTaken.TotalMilliseconds:F2} ms";
 				txtLogs.Text = File.ReadAllText(logFilePath);
 
-				// Notify user that the file was saved successfully
+				// Notify file was saved successfully
 				MessageBox.Show("Diagnostics completed and log file saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
 			}
 			catch (Exception ex)
 			{
+				lblProgress.Text = "Status: Failed";
+				lblTimeTaken.Text = "Time Taken: 0 ms"; // Reset time taken on failure
 				MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
+		private void Timer_Tick(object sender, EventArgs e)
+		{
+			// Update the time taken label with the elapsed time
+			lblTimeTaken.Text = $"Time Taken: {stopwatch.ElapsedMilliseconds} ms";
+		}
 		private async Task<string> PerformNetworkDiagnosticsAsync(string[] ipAddresses, string command)
 		{
 			// Generate a unique filename with a timestamp
@@ -52,8 +97,14 @@ namespace Network_Diagnostics
 			{
 				using (StreamWriter writer = new StreamWriter(logFilePath, false))  // 'false' ensures we're not appending
 				{
+					int totalCount = ipAddresses.Length;
+					int currentCount = 0;
+
 					foreach (var ip in ipAddresses)
 					{
+						lblProgress.Text = $"Status: Processing {++currentCount}/{totalCount}";
+						Application.DoEvents();  // Forces the UI to update
+
 						await writer.WriteLineAsync($"IP: {ip}, Command: {command}");
 
 						try
@@ -69,17 +120,21 @@ namespace Network_Diagnostics
 						await writer.WriteLineAsync("------------------------------------------------------");
 					}
 				}
+
+				lblProgress.Text = "Status: Completed";
 			}
 			catch (IOException ex)
 			{
+				lblProgress.Text = "Status: File Error";
 				MessageBox.Show($"File error: {ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch (Exception ex)
 			{
+				lblProgress.Text = "Status: Unexpected Error";
 				MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
-			return logFilePath; 
+			return logFilePath;
 		}
 
 		private Task<string> ExecuteCommandAsync(string ip, string command)
@@ -117,10 +172,9 @@ namespace Network_Diagnostics
 			{
 				if (!string.IsNullOrEmpty(logFilePath) && File.Exists(logFilePath))
 				{
-					// Suggest the generated file name
 					SaveFileDialog saveFileDialog = new SaveFileDialog();
 					saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-					saveFileDialog.FileName = Path.GetFileName(logFilePath);  
+					saveFileDialog.FileName = Path.GetFileName(logFilePath);  // Suggest the generated file name
 
 					if (saveFileDialog.ShowDialog() == DialogResult.OK)
 					{
@@ -151,6 +205,8 @@ namespace Network_Diagnostics
 		private void clear2_Click(object sender, EventArgs e)
 		{
 			txtLogs.Clear();
+			lblProgress.Text = "Status: Waiting";
+			lblTimeTaken.Text = "Time Taken: 0 ms";
 		}
 	}
 }
